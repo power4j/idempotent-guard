@@ -102,7 +102,7 @@ public class GeneralJdbcOperator implements JdbcOperator {
 	public int clear(Duration extra) {
 		String sql = String.format(TPL_CLEAR, tableName);
 		Instant time = Instant.now().plusMillis(extra.toMillis());
-		return jdbcOperations.update(sql, time);
+		return jdbcOperations.update(sql, new Timestamp(time.toEpochMilli()));
 	}
 
 }
