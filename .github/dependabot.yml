@@ -1,0 +1,11 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  #ignore:
+  #  - dependency-name: org.hibernate.validator:hibernate-validator-test-utils
+  #    versions:
+  #    - 7.0.1.Final

@@ -1,3 +1,4 @@
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.power4j/idempotent-guard/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.power4j/idempotent-guard)
 ## Idempotent Guard
 
 保护后端业务,防止前端重复提交。
@@ -49,10 +50,13 @@ public Result<Void> createUser(@RequestBody UserDTO dto) {
 ```yaml
 idempotent-guard:
   enabled: true # 开关,默认true
+  # 全局配置
+  global-config:
+    lock-expire: 30 锁的过期时间(秒)
   # 使用数据库时的配置
   jdbc:
     table-name: lock_guard # 表名称,默认 lock_guard 
-    clear-job-delay: 30000 # 后台清理任务的执行间隔,默认30s
-    expire-delay: 30000 # 清理过期锁的额外时间,默认30s
+    clear-job-delay: 30 # 后台清理任务的执行间隔,默认30s
+    clear-expire-extra: 30 # 清理过期锁的额外时间,默认30s
 
 ```

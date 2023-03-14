@@ -31,7 +31,7 @@ public @interface LockGuard {
 	ResDescribe[] resources() default {};
 
 	/**
-	 * 资源自动释放时间
+	 * 锁自动释放时间,小于等于0时使用全局配置
 	 * @return 时间值
 	 */
 	int time() default 0;

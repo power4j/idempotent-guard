@@ -75,7 +75,7 @@ public class IdempotentGuardAutoConfiguration {
 		@ConditionalOnBean(JdbcOperator.class)
 		ClearJob clearJob(JdbcOperator jdbcOperator, IdempotentGuardProperties properties) {
 			return new ClearJob(jdbcOperator, properties.getJdbc().getClearJobDelay(),
-					properties.getJdbc().getExpireDelay());
+					properties.getJdbc().getClearExpireExtra());
 		}
 
 	}

@@ -12,6 +12,7 @@ import com.power4j.idempotentguard.api.guard.Holder;
 import com.power4j.idempotentguard.api.guard.KeyEncoder;
 import com.power4j.idempotentguard.api.handler.GuardExceptionTranslator;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -41,6 +42,9 @@ public class HoldResourceAspect {
 
 	private final AccessGuard accessGuard;
 
+	@Setter
+	private Duration defaultExpire = Duration.ofSeconds(30);
+
 	@Around("@annotation(annotation)")
 	public Object around(ProceedingJoinPoint point, LockGuard annotation) throws Throwable {
 
@@ -51,18 +55,17 @@ public class HoldResourceAspect {
 
 		String hint = reslist.stream().map(p -> p.getKey() + ":" + p.getValue()).collect(Collectors.joining(","));
 
-		HoldRequest request = HoldRequest.builder()
-			.key(key)
-			.operation(operation)
-			.hint(hint)
-			.duration(Duration.ofMillis(annotation.timeUnit().toMillis(annotation.time())))
-			.build();
+		Duration expire = defaultExpire;
+		if (annotation.time() > 0) {
+			expire = Duration.ofMillis(annotation.timeUnit().toMillis(annotation.time()));
+		}
+
+		HoldRequest request = HoldRequest.builder().key(key).operation(operation).hint(hint).duration(expire).build();
 
 		final Holder holder = accessGuard.tryHold(request).orElse(null);
 		if (holder == null) {
 			return guardExceptionTranslator
 				.translate(new ResourceGuardException("Resource hold failed,operation:" + operation));
-
 		}
 
 		try {

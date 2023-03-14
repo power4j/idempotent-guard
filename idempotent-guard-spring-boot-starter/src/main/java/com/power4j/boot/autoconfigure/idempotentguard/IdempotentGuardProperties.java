@@ -15,6 +15,8 @@ public class IdempotentGuardProperties {
 
 	private boolean enabled = true;
 
+	private GlobalConfig globalConfig = new GlobalConfig();
+
 	private JdbcConfig jdbc = new JdbcConfig();
 
 	@Data
@@ -26,14 +28,24 @@ public class IdempotentGuardProperties {
 		private String tableName = "lock_guard";
 
 		/**
-		 * 清理任务的执行频率(毫秒)
+		 * 清理任务的执行频率(秒)
 		 */
-		private long clearJobDelay = 30_000;
+		private long clearJobDelay = 30;
 
 		/**
-		 * 额外的过期延时(毫秒)
+		 * 额外的过期延时(秒)
 		 */
-		private long expireDelay = 30_000;
+		private long clearExpireExtra = 30;
+
+	}
+
+	@Data
+	public static class GlobalConfig {
+
+		/**
+		 * 锁的过期时间(秒)
+		 */
+		private long lockExpire = 30;
 
 	}
 

@@ -20,12 +20,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.power4j</groupId>
-  <artifactId>idempotent-gruad</artifactId>
+  <artifactId>idempotent-guard</artifactId>
   <version>${revision}</version>
   <packaging>pom</packaging>
 
   <name>${project.artifactId}</name>
-  <url>https://github.com/power4j/idempotent-gruad</url>
+  <url>https://github.com/power4j/idempotent-guard</url>
   <description>Fist Cloud Dependencies</description>
 
   <licenses>
@@ -44,15 +44,15 @@
   </developers>
 
   <scm>
-    <url>https://github.com/power4j/idempotent-gruad</url>
-    <connection>scm:git:git://github.com/power4j/idempotent-gruad.git</connection>
-    <developerConnection>scm:git:https://github.com/power4j/idempotent-gruad.git</developerConnection>
+    <url>https://github.com/power4j/idempotent-guard</url>
+    <connection>scm:git:git://github.com/power4j/idempotent-guard.git</connection>
+    <developerConnection>scm:git:https://github.com/power4j/idempotent-guard.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
   <properties>
     <skipTests>false</skipTests>
-    <revision>0.1.0-SNAPSHOT</revision>
+    <revision>0.4.0-SNAPSHOT</revision>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.target>11</maven.compiler.target>
@@ -74,7 +74,7 @@
     <coca-kit.version>0.1.4</coca-kit.version>
     <guava.version>31.1-jre</guava.version>
     <redisson.version>3.20.0</redisson.version>
-    <fist-kit.version>2022.1.5-SNAPSHOT</fist-kit.version>
+    <fist-kit.version>2022.1.5</fist-kit.version>
   </properties>
 
   <modules>
