@@ -30,6 +30,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>com.power4j</groupId>
       <artifactId>idempotent-guard-api</artifactId>
     </dependency>
@@ -38,7 +43,7 @@
       <artifactId>idempotent-guard-jdbc</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.power4j.fist</groupId>
+      <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-support-spring</artifactId>
     </dependency>
     <dependency>
