@@ -43,7 +43,7 @@ jobs:
       - name: Test with Maven
         run: mvn -B test -DskipTests=false
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           #token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
           #files: ./coverage1.xml,./coverage2.xml # optional
