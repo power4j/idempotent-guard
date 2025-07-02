@@ -71,7 +71,7 @@
     <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
     <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
     <!-- libs -->
-    <coca-kit.version>0.1.4</coca-kit.version>
+    <coca-kit.version>0.4.1</coca-kit.version>
     <guava.version>31.1-jre</guava.version>
     <redisson.version>3.21.0</redisson.version>
     <fist-kit3.version>3.8.0</fist-kit3.version>
