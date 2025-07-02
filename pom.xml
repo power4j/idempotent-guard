@@ -72,7 +72,7 @@
     <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
     <!-- libs -->
     <coca-kit.version>0.4.1</coca-kit.version>
-    <guava.version>31.1-jre</guava.version>
+    <guava.version>33.4.8-jre</guava.version>
     <redisson.version>3.50.0</redisson.version>
     <fist-kit3.version>3.8.0</fist-kit3.version>
   </properties>
