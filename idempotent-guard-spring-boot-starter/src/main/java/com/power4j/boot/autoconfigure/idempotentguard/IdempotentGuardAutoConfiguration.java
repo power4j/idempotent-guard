@@ -21,6 +21,7 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
+import java.time.Duration;
 
 /**
  * @author CJ (power4j@outlook.com)
@@ -29,7 +30,7 @@ import javax.sql.DataSource;
 @AutoConfiguration
 @RequiredArgsConstructor
 @EnableConfigurationProperties(IdempotentGuardProperties.class)
-@ConditionalOnProperty(prefix = IdempotentGuardProperties.PROP_PREFIX, name = "enabled")
+@ConditionalOnProperty(prefix = IdempotentGuardProperties.PROP_PREFIX, name = "enabled", matchIfMissing = true)
 public class IdempotentGuardAutoConfiguration {
 
 	private final IdempotentGuardProperties properties;
@@ -44,7 +45,9 @@ public class IdempotentGuardAutoConfiguration {
 	@ConditionalOnBean({ KeyEncoder.class, GuardExceptionTranslator.class, AccessGuard.class })
 	HoldResourceAspect holdResourceAspect(KeyEncoder encoder, GuardExceptionTranslator translator,
 			AccessGuard accessGuard) {
-		return new HoldResourceAspect(encoder, translator, accessGuard);
+		HoldResourceAspect aspect = new HoldResourceAspect(encoder, translator, accessGuard);
+		aspect.setDefaultExpire(Duration.ofSeconds(properties.getGlobalConfig().getLockExpire()));
+		return aspect;
 	}
 
 	@Configuration
