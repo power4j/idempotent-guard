@@ -11,6 +11,7 @@ import com.power4j.idempotentguard.api.guard.HoldRequest;
 import com.power4j.idempotentguard.api.guard.Holder;
 import com.power4j.idempotentguard.api.guard.KeyEncoder;
 import com.power4j.idempotentguard.api.handler.GuardExceptionTranslator;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,7 @@ public class HoldResourceAspect {
 
 	private final AccessGuard accessGuard;
 
+	@Getter
 	@Setter
 	private Duration defaultExpire = Duration.ofSeconds(30);
 

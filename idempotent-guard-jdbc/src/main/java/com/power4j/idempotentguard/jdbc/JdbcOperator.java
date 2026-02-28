@@ -37,11 +37,12 @@ public interface JdbcOperator {
 	Optional<Holder> update(String id, Instant startTime, Duration duration, String holder, @Nullable String hint);
 
 	/**
-	 * 删除记录
+	 * 删除记录，仅当 token 匹配时才删除
 	 * @param id
+	 * @param token 持有令牌
 	 * @return
 	 */
-	boolean delete(String id);
+	boolean delete(String id, String token);
 
 	/**
 	 * 清理

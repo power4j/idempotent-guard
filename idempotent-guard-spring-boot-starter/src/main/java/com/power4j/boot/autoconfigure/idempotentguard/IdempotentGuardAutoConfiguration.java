@@ -7,6 +7,7 @@ import com.power4j.idempotentguard.jdbc.ClearJob;
 import com.power4j.idempotentguard.jdbc.GeneralJdbcGuard;
 import com.power4j.idempotentguard.jdbc.GeneralJdbcOperator;
 import com.power4j.idempotentguard.jdbc.JdbcOperator;
+import com.power4j.idempotentguard.jdbc.SchemaChecker;
 import com.power4j.idempotentguard.spring.aspect.DefaultKeyEncoder;
 import com.power4j.idempotentguard.spring.aspect.HoldResourceAspect;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
+import java.time.Duration;
 
 /**
  * @author CJ (power4j@outlook.com)
@@ -29,7 +31,7 @@ import javax.sql.DataSource;
 @AutoConfiguration
 @RequiredArgsConstructor
 @EnableConfigurationProperties(IdempotentGuardProperties.class)
-@ConditionalOnProperty(prefix = IdempotentGuardProperties.PROP_PREFIX, name = "enabled")
+@ConditionalOnProperty(prefix = IdempotentGuardProperties.PROP_PREFIX, name = "enabled", matchIfMissing = true)
 public class IdempotentGuardAutoConfiguration {
 
 	private final IdempotentGuardProperties properties;
@@ -41,10 +43,22 @@ public class IdempotentGuardAutoConfiguration {
 	}
 
 	@Bean
+	@ConditionalOnMissingBean
 	@ConditionalOnBean({ KeyEncoder.class, GuardExceptionTranslator.class, AccessGuard.class })
 	HoldResourceAspect holdResourceAspect(KeyEncoder encoder, GuardExceptionTranslator translator,
 			AccessGuard accessGuard) {
-		return new HoldResourceAspect(encoder, translator, accessGuard);
+		HoldResourceAspect aspect = new HoldResourceAspect(encoder, translator, accessGuard);
+		aspect.setDefaultExpire(Duration.ofSeconds(properties.getGlobalConfig().getLockExpire()));
+		return aspect;
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	@ConditionalOnBean(JdbcOperations.class)
+	@ConditionalOnProperty(prefix = IdempotentGuardProperties.PROP_PREFIX + ".jdbc", name = "schema-check",
+			matchIfMissing = true)
+	SchemaChecker schemaChecker(JdbcOperations jdbcOperations) {
+		return new SchemaChecker(jdbcOperations, properties.getJdbc().getTableName());
 	}
 
 	@Configuration

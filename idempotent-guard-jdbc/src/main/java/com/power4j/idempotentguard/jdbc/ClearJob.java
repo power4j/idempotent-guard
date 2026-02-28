@@ -23,14 +23,20 @@ public class ClearJob implements Closeable {
 	private final ScheduledExecutorService executorService;
 
 	public ClearJob(JdbcOperator jdbcOperator, long executeDelay, long extraExpire) {
+		this(jdbcOperator, executeDelay, extraExpire, new ScheduledThreadPoolExecutor(1));
+	}
+
+	public ClearJob(JdbcOperator jdbcOperator, long executeDelay, long extraExpire,
+			ScheduledExecutorService executorService) {
 		if (executeDelay < EXEC_DELAY_LOW) {
 			log.warn("清理任务执行间隔过低:{} s", executeDelay);
 		}
 		if (extraExpire < EXTRA_EXPIRE_LOW) {
 			log.warn("额外过期清除时间过低:{} s", extraExpire);
 		}
-		this.executorService = new ScheduledThreadPoolExecutor(1);
-		this.executorService.schedule(() -> clear(jdbcOperator, extraExpire), executeDelay, TimeUnit.SECONDS);
+		this.executorService = executorService;
+		this.executorService.scheduleAtFixedRate(() -> clear(jdbcOperator, extraExpire), executeDelay, executeDelay,
+				TimeUnit.SECONDS);
 	}
 
 	private void clear(JdbcOperator jdbcOperator, long extraExpire) {

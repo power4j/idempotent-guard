@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author CJ (power4j@outlook.com)
@@ -20,13 +21,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class GeneralJdbcOperator implements JdbcOperator {
 
-	private final static String TPL_INSERT = "INSERT INTO %s (id,start_time_utc,expire_time_utc,hold_by,hold_hint)"
-			+ "VALUES (?,?,?,?,?)";
+	private final static String TPL_INSERT = "INSERT INTO %s (id,start_time_utc,expire_time_utc,hold_by,hold_hint,hold_token)"
+			+ "VALUES (?,?,?,?,?,?)";
 
-	private final static String TPL_UPDATE = "UPDATE %s SET start_time_utc = ?,expire_time_utc = ? ,hold_by = ?,hold_hint = ?"
+	private final static String TPL_UPDATE = "UPDATE %s SET start_time_utc = ?,expire_time_utc = ? ,hold_by = ?,hold_hint = ?,hold_token = ?"
 			+ "WHERE id = ? AND expire_time_utc < ?";
 
-	private final static String TPL_DELETE = "DELETE FROM %s WHERE id = ?";
+	private final static String TPL_DELETE = "DELETE FROM %s WHERE id = ? AND hold_token = ?";
 
 	private final static String TPL_CLEAR = "DELETE FROM %s WHERE expire_time_utc < ?";
 
@@ -38,13 +39,15 @@ public class GeneralJdbcOperator implements JdbcOperator {
 	public Holder create(String id, Instant startTime, Duration duration, String holder, @Nullable String hint) {
 		String sql = String.format(TPL_INSERT, tableName);
 		Instant deadline = startTime.plusMillis(duration.toMillis());
+		String token = UUID.randomUUID().toString();
 		// @formatter:off
 		int row = jdbcOperations.update(sql,
 				id,
 				new Timestamp(startTime.toEpochMilli()),
 				new Timestamp(deadline.toEpochMilli()),
 				StringUtil.truncate(holder, 255),
-				StringUtil.truncate(hint, 255)
+				StringUtil.truncate(hint, 255),
+				token
 		);
 		// @formatter:on
 		if (row <= 0) {
@@ -57,6 +60,7 @@ public class GeneralJdbcOperator implements JdbcOperator {
 				.deadline(deadline)
 				.holdBy(holder)
 				.holdHint(hint)
+				.holdToken(token)
 				.build();
 		// @formatter:on
 	}
@@ -66,12 +70,14 @@ public class GeneralJdbcOperator implements JdbcOperator {
 			@Nullable String hint) {
 		String sql = String.format(TPL_UPDATE, tableName);
 		Instant deadline = startTime.plusMillis(duration.toMillis());
+		String token = UUID.randomUUID().toString();
 		// @formatter:off
 		int row = jdbcOperations.update(sql,
 				new Timestamp(startTime.toEpochMilli()),
 				new Timestamp(deadline.toEpochMilli()),
 				StringUtil.truncate(holder, 255),
 				StringUtil.truncate(hint, 255),
+				token,
 				id,
 				new Timestamp(Instant.now().toEpochMilli())
 		);
@@ -85,6 +91,7 @@ public class GeneralJdbcOperator implements JdbcOperator {
 					.deadline(deadline)
 					.holdBy(holder)
 					.holdHint(hint)
+					.holdToken(token)
 					.build();
 			// @formatter:on
 		}
@@ -92,16 +99,16 @@ public class GeneralJdbcOperator implements JdbcOperator {
 	}
 
 	@Override
-	public boolean delete(String id) {
+	public boolean delete(String id, String token) {
 		String sql = String.format(TPL_DELETE, tableName);
-		int row = jdbcOperations.update(sql, id);
+		int row = jdbcOperations.update(sql, id, token);
 		return row > 0;
 	}
 
 	@Override
 	public int clear(Duration extra) {
 		String sql = String.format(TPL_CLEAR, tableName);
-		Instant time = Instant.now().plusMillis(extra.toMillis());
+		Instant time = Instant.now().minusMillis(extra.toMillis());
 		return jdbcOperations.update(sql, new Timestamp(time.toEpochMilli()));
 	}
 
