@@ -7,6 +7,7 @@ import com.power4j.idempotentguard.jdbc.ClearJob;
 import com.power4j.idempotentguard.jdbc.GeneralJdbcGuard;
 import com.power4j.idempotentguard.jdbc.GeneralJdbcOperator;
 import com.power4j.idempotentguard.jdbc.JdbcOperator;
+import com.power4j.idempotentguard.jdbc.SchemaChecker;
 import com.power4j.idempotentguard.spring.aspect.DefaultKeyEncoder;
 import com.power4j.idempotentguard.spring.aspect.HoldResourceAspect;
 import lombok.RequiredArgsConstructor;
@@ -42,12 +43,22 @@ public class IdempotentGuardAutoConfiguration {
 	}
 
 	@Bean
+	@ConditionalOnMissingBean
 	@ConditionalOnBean({ KeyEncoder.class, GuardExceptionTranslator.class, AccessGuard.class })
 	HoldResourceAspect holdResourceAspect(KeyEncoder encoder, GuardExceptionTranslator translator,
 			AccessGuard accessGuard) {
 		HoldResourceAspect aspect = new HoldResourceAspect(encoder, translator, accessGuard);
 		aspect.setDefaultExpire(Duration.ofSeconds(properties.getGlobalConfig().getLockExpire()));
 		return aspect;
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	@ConditionalOnBean(JdbcOperations.class)
+	@ConditionalOnProperty(prefix = IdempotentGuardProperties.PROP_PREFIX + ".jdbc", name = "schema-check",
+			matchIfMissing = true)
+	SchemaChecker schemaChecker(JdbcOperations jdbcOperations) {
+		return new SchemaChecker(jdbcOperations, properties.getJdbc().getTableName());
 	}
 
 	@Configuration

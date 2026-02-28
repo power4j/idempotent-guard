@@ -37,6 +37,11 @@ public class IdempotentGuardProperties {
 		 */
 		private long clearExpireExtra = 30;
 
+		/**
+		 * 启动时校验表结构
+		 */
+		private boolean schemaCheck = true;
+
 	}
 
 	@Data

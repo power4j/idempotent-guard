@@ -3,7 +3,9 @@ package com.power4j.boot.autoconfigure.idempotentguard;
 import com.power4j.idempotentguard.api.guard.AccessGuard;
 import com.power4j.idempotentguard.api.guard.KeyEncoder;
 import com.power4j.idempotentguard.api.handler.GuardExceptionTranslator;
+import com.power4j.idempotentguard.jdbc.SchemaChecker;
 import com.power4j.idempotentguard.spring.aspect.HoldResourceAspect;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
@@ -39,6 +41,19 @@ class IdempotentGuardAutoConfigurationTest {
 				HoldResourceAspect aspect = context.getBean(HoldResourceAspect.class);
 				assertThat(aspect.getDefaultExpire()).isEqualTo(Duration.ofSeconds(60));
 			});
+	}
+
+	@Test
+	void schemaChecker_presentByDefault() {
+		contextRunner.withBean(JdbcOperations.class, () -> mock(JdbcOperations.class))
+			.run(context -> assertThat(context).hasSingleBean(SchemaChecker.class));
+	}
+
+	@Test
+	void schemaChecker_absentWhenDisabled() {
+		contextRunner.withPropertyValues("idempotent-guard.jdbc.schema-check=false")
+			.withBean(JdbcOperations.class, () -> mock(JdbcOperations.class))
+			.run(context -> assertThat(context).doesNotHaveBean(SchemaChecker.class));
 	}
 
 }
