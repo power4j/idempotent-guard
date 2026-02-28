@@ -24,6 +24,8 @@ public class HoldState implements Holder {
 
 	private final Instant deadline;
 
+	private final String holdToken;
+
 	@Override
 	public String getKey() {
 		return id;

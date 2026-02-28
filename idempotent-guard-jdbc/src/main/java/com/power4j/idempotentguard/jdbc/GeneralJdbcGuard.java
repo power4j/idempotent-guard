@@ -1,5 +1,6 @@
 package com.power4j.idempotentguard.jdbc;
 
+import com.power4j.idempotentguard.api.exception.GuardInfrastructureException;
 import com.power4j.idempotentguard.api.guard.AccessGuard;
 import com.power4j.idempotentguard.api.guard.HoldRequest;
 import com.power4j.idempotentguard.api.guard.Holder;
@@ -33,15 +34,15 @@ public class GeneralJdbcGuard implements AccessGuard {
 			return jdbcOperator.update(id, Instant.now(), request.getDuration(), getHolder(), request.getHint());
 		}
 		catch (Exception e) {
-			log.error(e.getMessage(), e);
-			return Optional.empty();
+			throw new GuardInfrastructureException("Guard infrastructure error", e);
 		}
 
 	}
 
 	@Override
 	public void release(Holder holder) {
-		jdbcOperator.delete(holder.getKey());
+		HoldState state = (HoldState) holder;
+		jdbcOperator.delete(state.getKey(), state.getHoldToken());
 	}
 
 	protected String getHolder() {
