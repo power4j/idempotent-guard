@@ -45,3 +45,26 @@ DELETE FROM lock_guard WHERE hold_token = '';
 - 升级前无需停机，DDL 为非破坏性变更（仅加列）
 - 滚动发布期间，旧版本写入的行 `hold_token` 为空，`release` 时 `DELETE WHERE hold_token = ''` 不会匹配到任何行，旧锁将依赖过期自然清理
 - 建议在全量升级完成后再执行可选清理步骤
+
+---
+
+## 升级顺序（重要）
+
+v2 默认开启启动自检（`idempotent-guard.jdbc.schema-check=true`），应用启动时会执行探针查询验证 `hold_token` 列是否存在。
+
+**必须先执行 DDL，再部署新版本应用**，否则应用将在启动时快速失败并输出如下错误：
+
+```
+GuardInfrastructureException: Schema check failed for table 'lock_guard': ...
+Please run the migration script.
+```
+
+如需在 DDL 执行前临时部署（例如蓝绿发布过渡期），可临时关闭自检：
+
+```yaml
+idempotent-guard:
+  jdbc:
+    schema-check: false
+```
+
+待 DDL 全量完成后恢复为 `true`。
