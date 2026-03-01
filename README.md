@@ -52,11 +52,11 @@ idempotent-guard:
   enabled: true # 开关,默认true
   # 全局配置
   global-config:
-    lock-expire: 30 锁的过期时间(秒)
+    lock-expire: 30 # 锁的过期时间(秒),默认30s
   # 使用数据库时的配置
   jdbc:
-    table-name: lock_guard # 表名称,默认 lock_guard 
+    table-name: lock_guard # 表名称,默认 lock_guard
     clear-job-delay: 30 # 后台清理任务的执行间隔,默认30s
     clear-expire-extra: 30 # 清理过期锁的额外时间,默认30s
-
+    schema-check: true # 启动时校验表结构,默认true
 ```
