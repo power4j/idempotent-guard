@@ -1,4 +1,4 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.power4j/idempotent-guard/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.power4j/idempotent-guard)
+[![Maven Central](https://img.shields.io/maven-central/v/com.power4j/idempotent-guard)](https://central.sonatype.com/search?namespace=com.power4j&name=idempotent-guard)
 ## Idempotent Guard
 
 保护后端业务,防止前端重复提交。
