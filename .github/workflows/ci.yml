@@ -25,7 +25,7 @@ jobs:
           java-version: '17'
 
       - name: Cache local Maven repository
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         env:
           cache-name: cache-mvn
         with:
@@ -43,7 +43,7 @@ jobs:
       - name: Test with Maven
         run: mvn -B test -DskipTests=false
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           #token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
           #files: ./coverage1.xml,./coverage2.xml # optional
